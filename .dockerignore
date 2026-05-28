@@ -1,0 +1,14 @@
+.git
+.github
+.claude
+ezfit/
+__pycache__/
+.pytest_cache/
+.DS_Store
+.env
+*.pyc
+tests/
+README.md
+images/
+database/
+prompt
