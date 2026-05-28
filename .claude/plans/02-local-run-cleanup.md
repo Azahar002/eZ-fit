@@ -1,54 +1,91 @@
-# Plan 02: Local Run Cleanup
+# Stage 2 — Local Run Cleanup
 
-## Goal
-Make the app run cleanly on localhost in a way that's ready for containerization. No hardcoded config, no debug in prod.
+**Date:** 2026-05-28
+**Branch:** project-review
+**Based on:** Stage 1 audit (`01-project-review.md`)
 
-## Steps
+---
 
-1. **Add python-dotenv**
-   Add to `requirements.txt`:
-   ```
-   python-dotenv==1.0.1
-   ```
+## What Was Changed
 
-2. **Create .env file**
-   ```
-   FLASK_SECRET_KEY=dev-secret-change-in-prod
-   FLASK_DEBUG=true
-   FLASK_PORT=5001
-   ```
-   Add `.env` to `.gitignore` if not already there.
+### `app.py`
 
-3. **Update app.py**
-   Load config from environment:
-   ```python
-   from dotenv import load_dotenv
-   import os
-   load_dotenv()
+- Added `jsonify` to Flask import
+- Added `/health` route returning `{"status": "healthy"}` with HTTP 200
+- Updated `/login` to accept `GET` and `POST` — re-renders `login.html` on both; POST no longer returns 405
+- Updated `/register` to accept `GET` and `POST` — re-renders `register.html` on both; POST no longer returns 405
+- Added `# TODO` comments on both auth routes marking where real auth goes in Step 3
 
-   app.secret_key = os.environ.get("FLASK_SECRET_KEY", "fallback-key")
-   debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
-   port = int(os.environ.get("FLASK_PORT", 5001))
+### `requirements.txt`
 
-   if __name__ == "__main__":
-       app.run(debug=debug, port=port, host="0.0.0.0")
-   ```
-   Note: `host="0.0.0.0"` is required for Docker.
+- Added `gunicorn==23.0.0` — required for production WSGI server in Docker
 
-4. **Verify local run still works**
-   ```bash
-   pip install -r requirements.txt
-   python app.py
-   ```
-   All 3 pages load at http://localhost:5001.
+### `.gitignore`
 
-5. **Run tests**
-   ```bash
-   pytest tests/ -v
-   ```
+- Added `ezfit/` — excludes the local virtual environment from git and future Docker build context
+- Added `.env` — excludes secrets file
+- Added `__pycache__/` — excludes Python bytecode cache
+- Added `.pytest_cache/` — excludes pytest cache
 
-## Done When
-- App starts with no warnings
-- Config is fully env-driven
-- Tests pass
-- `.env` is gitignored
+---
+
+## Why It Was Changed
+
+| Change | Reason |
+|--------|--------|
+| `/health` route | Required by Docker health checks and container orchestrators |
+| POST on `/login` + `/register` | Forms submit via POST; GET-only routes returned 405 |
+| `gunicorn` in requirements | `flask run` dev server is not safe for production or Docker |
+| `ezfit/` in `.gitignore` | 300MB+ venv must not be committed or copied into Docker image |
+| `.env` in `.gitignore` | Secrets must never be committed |
+| `__pycache__/` + `.pytest_cache/` in `.gitignore` | Generated files; not source code |
+
+---
+
+## Local Run
+
+```bash
+cd /Users/azzu/Desktop/eZ-fit
+source ezfit/bin/activate
+pip install -r requirements.txt
+python app.py
+```
+
+## Local Website URL
+
+```
+http://127.0.0.1:5001
+```
+
+## Health Check URL
+
+```
+http://127.0.0.1:5001/health
+→ {"status": "healthy"}
+```
+
+---
+
+## Verification Results
+
+| Endpoint | Method | Result |
+|----------|--------|--------|
+| `/` | GET | 200 — renders landing.html |
+| `/health` | GET | 200 — `{"status": "healthy"}` (application/json) |
+| `/login` | GET | 200 — renders login.html |
+| `/register` | GET | 200 — renders register.html |
+| `/login` | POST | 200 — renders login.html (no 405) |
+| `/register` | POST | 200 — renders register.html (no 405) |
+
+---
+
+## Remaining Issues Before Dockerization (Stage 3)
+
+| # | Issue | Blocking Docker? |
+|---|-------|-----------------|
+| 1 | No `host="0.0.0.0"` in `app.run()` | Yes — add in Stage 3 |
+| 2 | No `wsgi.py` | No — Dockerfile can call gunicorn directly |
+| 3 | `images/` folder has 20 unreferenced PNGs | No — gitignored; review and clean up later |
+| 4 | `main.js` is a comment-only stub | No — not blocking |
+| 5 | No `.dockerignore` | Yes — add in Stage 3 (must exclude `ezfit/`, `images/`, `.DS_Store`) |
+| 6 | Real auth not implemented | No — deferred to Step 3 of curriculum |
