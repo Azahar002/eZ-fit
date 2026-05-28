@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)
 
@@ -12,13 +12,20 @@ def landing():
     return render_template("landing.html")
 
 
-@app.route("/register")
+@app.route("/health")
+def health():
+    return jsonify({"status": "healthy"}), 200
+
+
+@app.route("/register", methods=["GET", "POST"])
 def register():
+    # TODO: Implement real registration logic in Step 3
     return render_template("register.html")
 
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    # TODO: Implement real authentication in Step 3
     return render_template("login.html")
 
 

@@ -2,3 +2,8 @@
 **/.DS_Store
 *.png
 images/
+prompt
+ezfit/
+.env
+__pycache__/
+.pytest_cache/
