@@ -1,0 +1,63 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is gitignored — never commit real values.
+#
+# cp terraform.tfvars.example terraform.tfvars
+
+# ------------------------------------------------------------------ #
+# Identity                                                            #
+# ------------------------------------------------------------------ #
+
+project_name = "ezfit"
+environment  = "dev"
+location     = "eastus"
+
+# ------------------------------------------------------------------ #
+# Resource names                                                      #
+# ------------------------------------------------------------------ #
+
+resource_group_name            = "rg-ezfit-dev-eastus"
+
+# ACR name must be globally unique across all Azure (alphanumeric only).
+# Add a short suffix if the default name is already taken, e.g. "acrezfitdev42".
+container_registry_name        = "acrezfitdev"
+
+log_analytics_workspace_name   = "law-ezfit-dev"
+container_app_environment_name = "cae-ezfit-dev"
+container_app_name             = "ca-ezfit-web-dev"
+
+# ------------------------------------------------------------------ #
+# Container                                                           #
+# ------------------------------------------------------------------ #
+
+# Placeholder image — serves on port 80. Used for initial infrastructure creation.
+# Replace with your ACR image path in Stage 7, e.g.:
+#   container_image = "acrezfitdev.azurecr.io/ezfit:latest"
+container_image = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+
+# Use 80 with the placeholder image above.
+# Change to 5000 when deploying the real Flask/Gunicorn app in Stage 7.
+container_port = 80
+
+# ------------------------------------------------------------------ #
+# Compute — minimal / cheapest consumption tier                       #
+# ------------------------------------------------------------------ #
+
+cpu    = 0.25
+memory = "0.5Gi"
+
+# ------------------------------------------------------------------ #
+# Logging                                                             #
+# ------------------------------------------------------------------ #
+
+# 30 days is the minimum retention (cheapest). Increase only if needed.
+log_retention_days = 30
+
+# ------------------------------------------------------------------ #
+# Tags                                                                #
+# ------------------------------------------------------------------ #
+
+tags = {
+  project     = "ezfit"
+  environment = "dev"
+  managed_by  = "terraform"
+}
