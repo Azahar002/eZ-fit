@@ -6,11 +6,13 @@ on:
       - main
     paths:
       - "infra/terraform/**"
+      - "infrastructure/infrastructure.yml"
   pull_request:
     branches:
       - main
     paths:
       - "infra/terraform/**"
+      - "infrastructure/infrastructure.yml"
 
 permissions:
   id-token: write
@@ -22,32 +24,61 @@ env:
   ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
   ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
   ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-  ARM_USE_OIDC: "true" 
+  ARM_USE_OIDC: "true"
 
 jobs:
-  terraform:
-    name: Terraform Plan / Apply
+  read-config:
+    name: Read Infrastructure Config
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: infra/terraform
-
+    outputs:
+      tf_action: ${{ steps.config.outputs.tf_action }}
+      tf_dir: ${{ steps.config.outputs.tf_dir }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug GitHub OIDC context 
+      - name: Parse infrastructure.yml
+        id: config
+        run: |
+          TF_ACTION=$(python3 -c "
+          import yaml
+          with open('infrastructure/infrastructure.yml') as f:
+              c = yaml.safe_load(f)
+          print(c['infrastructure']['dev']['ezfit']['tfAction'])
+          ")
+          TF_DIR=$(python3 -c "
+          import yaml
+          with open('infrastructure/infrastructure.yml') as f:
+              c = yaml.safe_load(f)
+          print(c['infrastructure']['dev']['ezfit']['terraformDirectory'])
+          ")
+          if [[ "$TF_ACTION" != "plan" && "$TF_ACTION" != "apply" && "$TF_ACTION" != "destroy" ]]; then
+            echo "ERROR: tfAction '$TF_ACTION' is not valid. Must be one of: plan, apply, destroy"
+            exit 1
+          fi
+          echo "tf_action=$TF_ACTION" >> "$GITHUB_OUTPUT"
+          echo "tf_dir=$TF_DIR" >> "$GITHUB_OUTPUT"
+          echo "Parsed tfAction: $TF_ACTION"
+          echo "Parsed terraformDirectory: $TF_DIR"
+
+  terraform-plan:
+    name: Terraform Validate & Plan
+    runs-on: ubuntu-latest
+    needs: read-config
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Debug GitHub OIDC context
         run: |
           echo "repository=${{ github.repository }}"
           echo "event_name=${{ github.event_name }}"
           echo "ref=${{ github.ref }}"
           echo "head_ref=${{ github.head_ref }}"
           echo "base_ref=${{ github.base_ref }}"
-          echo "workflow_ref=${{ github.workflow_ref }}"
           echo "actor=${{ github.actor }}"
-          echo "azure_client_id_present=${{ vars.AZURE_CLIENT_ID != '' }}"
-          echo "azure_tenant_id_present=${{ vars.AZURE_TENANT_ID != '' }}"
-          echo "azure_subscription_id_present=${{ vars.AZURE_SUBSCRIPTION_ID != '' }}"
+          echo "tf_action=${{ needs.read-config.outputs.tf_action }}"
+          echo "tf_dir=${{ needs.read-config.outputs.tf_dir }}"
 
       - name: Azure login (OIDC)
         uses: azure/login@v2
@@ -63,16 +94,28 @@ jobs:
 
       - name: Terraform fmt check
         run: terraform fmt -check -recursive
+        working-directory: ${{ needs.read-config.outputs.tf_dir }}
 
       - name: Terraform init
         run: terraform init
+        working-directory: ${{ needs.read-config.outputs.tf_dir }}
 
       - name: Terraform validate
         run: terraform validate
+        working-directory: ${{ needs.read-config.outputs.tf_dir }}
 
       - name: Terraform plan
-        id: plan
-        run: terraform plan -no-color -out=tfplan
+        id: plan-apply
+        if: needs.read-config.outputs.tf_action != 'destroy'
+        run: terraform plan -no-color
+        working-directory: ${{ needs.read-config.outputs.tf_dir }}
+        continue-on-error: true
+
+      - name: Terraform plan -destroy
+        id: plan-destroy
+        if: needs.read-config.outputs.tf_action == 'destroy'
+        run: terraform plan -destroy -no-color
+        working-directory: ${{ needs.read-config.outputs.tf_dir }}
         continue-on-error: true
 
       - name: Post plan to PR
@@ -80,11 +123,15 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const output = `#### Terraform Plan 📖
-            \`\`\`
-            ${{ steps.plan.outputs.stdout }}
-            \`\`\`
-            *Pushed by @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+            const action = '${{ needs.read-config.outputs.tf_action }}';
+            const isDestroy = action === 'destroy';
+            const planOutput = isDestroy
+              ? `${{ steps.plan-destroy.outputs.stdout }}`
+              : `${{ steps.plan-apply.outputs.stdout }}`;
+            const header = isDestroy
+              ? '#### Terraform Plan (DESTROY) ⚠️'
+              : '#### Terraform Plan 📖';
+            const output = `${header}\n\`\`\`\n${planOutput}\n\`\`\`\n*Pushed by @${{ github.actor }}, Action: \`${action}\`*`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -93,9 +140,66 @@ jobs:
             });
 
       - name: Fail if plan failed
-        if: steps.plan.outcome == 'failure'
+        if: |
+          (needs.read-config.outputs.tf_action != 'destroy' && steps.plan-apply.outcome == 'failure') ||
+          (needs.read-config.outputs.tf_action == 'destroy' && steps.plan-destroy.outcome == 'failure')
         run: exit 1
 
+  terraform-apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    needs: [read-config, terraform-plan]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.read-config.outputs.tf_action == 'apply'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform init
+        run: terraform init
+        working-directory: ${{ needs.read-config.outputs.tf_dir }}
+
       - name: Terraform apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve
+        working-directory: ${{ needs.read-config.outputs.tf_dir }}
+
+  terraform-destroy:
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+    needs: [read-config, terraform-plan]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.read-config.outputs.tf_action == 'destroy'
+    environment: ezfit-destroy
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform init
+        run: terraform init
+        working-directory: ${{ needs.read-config.outputs.tf_dir }}
+
+      - name: Terraform destroy
+        run: terraform destroy -auto-approve
+        working-directory: ${{ needs.read-config.outputs.tf_dir }}

@@ -1,0 +1,9 @@
+infrastructure:
+  dev:
+    ezfit:
+      enabled: true
+      tfAction: apply
+      terraformDirectory: infra/terraform
+      tfvarsFile: terraform.tfvars
+      environment: dev
+      description: "EZ-FIT Azure Container Apps infrastructure"
