@@ -36,7 +36,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug GitHub OIDC context
+      - name: Debug GitHub OIDC context 
         run: |
           echo "repository=${{ github.repository }}"
           echo "event_name=${{ github.event_name }}"
