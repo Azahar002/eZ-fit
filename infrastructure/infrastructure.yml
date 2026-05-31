@@ -2,7 +2,7 @@ infrastructure:
   dev:
     ezfit:
       enabled: true
-      tfAction: destroy
+      tfAction: apply
       terraformDirectory: infra/terraform
       tfvarsFile: terraform.tfvars
       environment: dev
