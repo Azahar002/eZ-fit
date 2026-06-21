@@ -17,10 +17,7 @@ resource "azurerm_container_registry" "this" {
   resource_group_name = azurerm_resource_group.this.name
   location            = azurerm_resource_group.this.location
   sku                 = "Basic"
-
-  # Admin user enabled for initial simple push/pull workflow.
-  # Migrate to managed identity or OIDC token in Stage 7 for production-grade auth.
-  admin_enabled = true
+  admin_enabled       = true
 
   tags = var.tags
 }
@@ -52,6 +49,29 @@ resource "azurerm_container_app_environment" "this" {
 }
 
 # ------------------------------------------------------------------ #
+# Managed Identity for Container App                                  #
+# Allows the Container App to pull images from ACR without           #
+# admin credentials or client secrets.                               #
+# ------------------------------------------------------------------ #
+
+resource "azurerm_user_assigned_identity" "container_app" {
+  name                = "id-ezfit-ca-dev"
+  resource_group_name = azurerm_resource_group.this.name
+  location            = azurerm_resource_group.this.location
+  tags                = var.tags
+}
+
+# ------------------------------------------------------------------ #
+# Grant managed identity AcrPull on the registry                     #
+# ------------------------------------------------------------------ #
+
+resource "azurerm_role_assignment" "acr_pull" {
+  scope                = azurerm_container_registry.this.id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_user_assigned_identity.container_app.principal_id
+}
+
+# ------------------------------------------------------------------ #
 # Container App                                                       #
 # ------------------------------------------------------------------ #
 
@@ -60,6 +80,16 @@ resource "azurerm_container_app" "this" {
   container_app_environment_id = azurerm_container_app_environment.this.id
   resource_group_name          = azurerm_resource_group.this.name
   revision_mode                = "Single"
+
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.container_app.id]
+  }
+
+  registry {
+    server   = azurerm_container_registry.this.login_server
+    identity = azurerm_user_assigned_identity.container_app.id
+  }
 
   template {
     container {
@@ -78,6 +108,14 @@ resource "azurerm_container_app" "this" {
       percentage      = 100
       latest_revision = true
     }
+  }
+
+  # The CD workflow updates the image via az containerapp update.
+  # Ignoring image here prevents terraform apply from reverting it.
+  lifecycle {
+    ignore_changes = [
+      template[0].container[0].image,
+    ]
   }
 
   tags = var.tags
