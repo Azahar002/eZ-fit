@@ -1,91 +1,345 @@
 {% extends "base.html" %}
 
-{% block title %}eZ-Fit — Track Every Workout{% endblock %}
+{% block title %}eZ-Fit — Your Fitness Journey Starts Here{% endblock %}
 
 {% block content %}
 
+<!-- ============================================================
+     HERO
+     ============================================================ -->
 <section class="hero">
-    <div class="hero-inner">
-        <div class="hero-badge">Personal Fitness Tracker</div>
-        <h1 class="hero-title">
-            Know where your<br>
-            <em>effort goes</em>
-        </h1>
+    <div class="hero-content">
+        <span class="section-label">GROW STRONGER</span>
+        <h1>Your <span class="text-red">Fitness</span> Journey<br>Starts Here</h1>
         <p class="hero-subtitle">
-            Log workouts, understand your fitness patterns,
-            and take control of your health —
-            one session at a time.
+            At eZ-Fit Gym, we're more than just a workout space. We're a
+            community. Our gym offers the tools, support and motivation.
         </p>
-        <div class="hero-actions">
-            <a href="{{ url_for('register') }}" class="btn-primary">Start tracking free</a>
-            <a href="{{ url_for('login') }}" class="btn-ghost">Sign in</a>
+        <a href="{{ url_for('register') }}" class="btn-red">
+            Join Now
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+        </a>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-num">320+</span>
+                <span class="stat-label">members</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">100+</span>
+                <span class="stat-label">machines</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">50+</span>
+                <span class="stat-label">coaches</span>
+            </div>
         </div>
     </div>
-    <div class="hero-visual">
-        <div class="mock-card">
-            <div class="mock-card-header">
-                <span class="mock-label">March 2026</span>
-                <span class="mock-total">18 sessions</span>
+    <div class="hero-image">
+        <img src="{{ url_for('static', filename='img/stock-evolve.png') }}" alt="eZ-Fit athlete">
+    </div>
+</section>
+
+
+<!-- ============================================================
+     ABOUT
+     ============================================================ -->
+<section class="about">
+    <div class="about-inner">
+        <span class="section-label">ABOUT</span>
+        <h2>Built for Everyone. Powered by Passion.</h2>
+        <p class="about-desc">
+            At eZ-Fit Gym, we believe fitness is for everybody — no matter your age,
+            shape, or skill level. Founded in 2018, our mission is simple: help you
+            become stronger, healthier, and more confident through movement.
+        </p>
+
+        <div class="about-layout">
+            <!-- Left features -->
+            <div class="about-features-col">
+                <div class="about-feature">
+                    <div class="feature-circle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <span>24/7<br>Access</span>
+                </div>
+                <div class="about-feature">
+                    <div class="feature-circle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <span>Personal<br>Training</span>
+                </div>
             </div>
-            <div class="mock-bars">
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Running</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar" style="width: 72%"></div>
-                    </div>
-                    <span class="mock-amt">42 km</span>
+
+            <!-- Centre collage -->
+            <div class="about-collage">
+                <div class="collage-card collage-back-left">
+                    <img src="{{ url_for('static', filename='img/stock-sacrifice.png') }}" alt="Gym">
                 </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Strength</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-2" style="width: 52%"></div>
-                    </div>
-                    <span class="mock-amt">8 sessions</span>
+                <div class="collage-card collage-back-right">
+                    <img src="{{ url_for('static', filename='img/stock-tries.png') }}" alt="Gym">
                 </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Cycling</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-3" style="width: 33%"></div>
-                    </div>
-                    <span class="mock-amt">65 km</span>
+                <div class="collage-card collage-front">
+                    <img src="{{ url_for('static', filename='img/stock-evolve.png') }}" alt="Gym">
                 </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Yoga</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-4" style="width: 28%"></div>
+            </div>
+
+            <!-- Right features -->
+            <div class="about-features-col">
+                <div class="about-feature">
+                    <div class="feature-circle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                     </div>
-                    <span class="mock-amt">4 sessions</span>
+                    <span>Modern<br>Vibes</span>
+                </div>
+                <div class="about-feature">
+                    <div class="feature-circle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <span>Certified<br>Trainers</span>
+                </div>
+            </div>
+        </div>
+
+        <a href="#" class="btn-red">
+            Read More
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+        </a>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     SERVICES
+     ============================================================ -->
+<section class="services">
+    <div class="services-inner">
+        <div class="services-left">
+            <span class="section-label">OUR SERVICES</span>
+            <h2>Fitness, Coaching &amp; Care — All Under One Roof.</h2>
+            <p class="services-desc">
+                At eZ-Fit Gym, we offer a full range of fitness and wellness services to
+                help you reach your goals — whether you're just starting or pushing your limits.
+            </p>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <h4>Personal Training</h4>
+                    <p>One-on-one coaching with certified trainers who design workouts tailored to your body, goals, and lifestyle.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
+                    </div>
+                    <h4>Nutritional Support</h4>
+                    <p>One-on-one coaching with certified trainers who design workouts tailored to your body, goals, and lifestyle.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" x2="6" y1="1" y2="4"/><line x1="10" x2="10" y1="1" y2="4"/><line x1="14" x2="14" y1="1" y2="4"/></svg>
+                    </div>
+                    <h4>Strength &amp; Cardio</h4>
+                    <p>One-on-one coaching with certified trainers who design workouts tailored to your body, goals, and lifestyle.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h4>Group Classes</h4>
+                    <p>One-on-one coaching with certified trainers who design workouts tailored to your body, goals, and lifestyle.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="services-right">
+            <div class="services-photo">
+                <img src="{{ url_for('static', filename='img/stock-tries.png') }}" alt="Gym training">
+                <div class="customers-badge">
+                    <div class="customers-avatars">
+                        <img src="{{ url_for('static', filename='img/coach-4.png') }}" alt="">
+                        <img src="{{ url_for('static', filename='img/coach-3.png') }}" alt="">
+                        <img src="{{ url_for('static', filename='img/coach-5.png') }}" alt="">
+                    </div>
+                    <div class="badge-text">
+                        <strong>50+</strong>
+                        <span>customers</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="features">
-    <div class="features-inner">
-        <div class="feature-card">
-            <div class="feature-icon">◎</div>
-            <h3 class="feature-title">Log workouts instantly</h3>
-            <p class="feature-body">Add any session in seconds. Type, duration, distance, notes — all in one simple form.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">◈</div>
-            <h3 class="feature-title">Understand your patterns</h3>
-            <p class="feature-body">See exactly how you train with activity breakdowns and monthly summaries.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">◷</div>
-            <h3 class="feature-title">Filter by time period</h3>
-            <p class="feature-body">View your training for any date range — last week, last month, or a custom period.</p>
+
+<!-- ============================================================
+     COACHES
+     ============================================================ -->
+<section class="coaches">
+    <div class="coaches-inner">
+        <span class="section-label">FEATURED COACHES</span>
+        <h2>The People Behind the Power.</h2>
+
+        <div class="coaches-grid">
+
+            <!-- Coach 1 -->
+            <div class="coach-card">
+                <div class="coach-photo">
+                    <img src="{{ url_for('static', filename='img/coach-1.png') }}" alt="Ravi">
+                </div>
+                <div class="coach-info">
+                    <h4>Ravi — HIIT Coach</h4>
+                    <p>High-intensity training, fast results</p>
+                    <div class="coach-socials">
+                        <a href="#" class="coach-social" aria-label="Facebook">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="#" class="coach-social" aria-label="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                        </a>
+                        <a href="#" class="coach-social" aria-label="LinkedIn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coach 2 -->
+            <div class="coach-card">
+                <div class="coach-photo">
+                    <img src="{{ url_for('static', filename='img/coach-2.png') }}" alt="Dan">
+                </div>
+                <div class="coach-info">
+                    <h4>Dan — Mindset Coach</h4>
+                    <p>High-intensity training, fast results</p>
+                    <div class="coach-socials">
+                        <a href="#" class="coach-social" aria-label="Facebook">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="#" class="coach-social" aria-label="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                        </a>
+                        <a href="#" class="coach-social" aria-label="LinkedIn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coach 3 -->
+            <div class="coach-card">
+                <div class="coach-photo">
+                    <img src="{{ url_for('static', filename='img/coach-3.png') }}" alt="Ayesh">
+                </div>
+                <div class="coach-info">
+                    <h4>Ayesh — Cardio Expert</h4>
+                    <p>High-intensity training, fast results</p>
+                    <div class="coach-socials">
+                        <a href="#" class="coach-social" aria-label="Facebook">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="#" class="coach-social" aria-label="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                        </a>
+                        <a href="#" class="coach-social" aria-label="LinkedIn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coach 4 -->
+            <div class="coach-card">
+                <div class="coach-photo">
+                    <img src="{{ url_for('static', filename='img/coach-4.png') }}" alt="Maya">
+                </div>
+                <div class="coach-info">
+                    <h4>Maya — Yoga Instructor</h4>
+                    <p>High-intensity training, fast results</p>
+                    <div class="coach-socials">
+                        <a href="#" class="coach-social" aria-label="Facebook">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="#" class="coach-social" aria-label="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                        </a>
+                        <a href="#" class="coach-social" aria-label="LinkedIn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coach 5 -->
+            <div class="coach-card">
+                <div class="coach-photo">
+                    <img src="{{ url_for('static', filename='img/coach-5.png') }}" alt="Kamal">
+                </div>
+                <div class="coach-info">
+                    <h4>Kamal — Strength Trainer</h4>
+                    <p>High-intensity training, fast results</p>
+                    <div class="coach-socials">
+                        <a href="#" class="coach-social" aria-label="Facebook">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="#" class="coach-social" aria-label="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                        </a>
+                        <a href="#" class="coach-social" aria-label="LinkedIn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
 
-<section class="cta-section">
-    <div class="cta-inner">
-        <h2 class="cta-title">Ready to take control?</h2>
-        <p class="cta-body">Join thousands of people who track their fitness with eZ-Fit.</p>
-        <a href="{{ url_for('register') }}" class="btn-primary">Create free account</a>
+
+<!-- ============================================================
+     WHY US
+     ============================================================ -->
+<section class="why-us">
+    <div class="why-inner">
+        <span class="section-label">WHY US</span>
+        <h2>Here's Why Members Love Us.</h2>
+
+        <div class="why-grid">
+            <div class="why-item">
+                <div class="why-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </div>
+                <span>Friendly &amp;<br>Professional Staff</span>
+            </div>
+            <div class="why-item">
+                <div class="why-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                </div>
+                <span>Clean &amp; Safe<br>Environment</span>
+            </div>
+            <div class="why-item">
+                <div class="why-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="1" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <span>Affordable<br>Membership Plans</span>
+            </div>
+            <div class="why-item">
+                <div class="why-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                </div>
+                <span>Community Events<br>&amp; Challenges</span>
+            </div>
+            <div class="why-item">
+                <div class="why-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                </div>
+                <span>Built for Results<br>&amp; Backed By Care</span>
+            </div>
+        </div>
     </div>
 </section>
 

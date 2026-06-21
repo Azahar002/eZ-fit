@@ -1,1 +1,5 @@
-// main.js — students will add JavaScript here as features are built
+const toggle = document.getElementById('navToggle');
+const links  = document.getElementById('navLinks');
+if (toggle && links) {
+    toggle.addEventListener('click', () => links.classList.toggle('open'));
+}
