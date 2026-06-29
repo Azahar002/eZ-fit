@@ -85,3 +85,8 @@ variable "tags" {
     managed_by  = "terraform"
   }
 }
+
+variable "github_actions_client_id" {
+  description = "Client ID of the GitHub Actions service principal (sp-ezfit-github-actions). Used to resolve the SP object ID. Set in terraform.tfvars — never commit the real value."
+  type        = string
+}

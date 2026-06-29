@@ -61,3 +61,11 @@ tags = {
   environment = "dev"
   managed_by  = "terraform"
 }
+
+# ------------------------------------------------------------------ #
+# IAM                                                                 #
+# ------------------------------------------------------------------ #
+
+# Client ID of sp-ezfit-github-actions (matches AZURE_CLIENT_ID GitHub variable)
+# Find it: az ad app list --display-name sp-ezfit-github-actions --query '[].appId' -o tsv
+github_actions_client_id = "00000000-0000-0000-0000-000000000000"

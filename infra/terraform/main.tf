@@ -62,16 +62,6 @@ resource "azurerm_user_assigned_identity" "container_app" {
 }
 
 # ------------------------------------------------------------------ #
-# Grant managed identity AcrPull on the registry                     #
-# ------------------------------------------------------------------ #
-
-resource "azurerm_role_assignment" "acr_pull" {
-  scope                = azurerm_container_registry.this.id
-  role_definition_name = "AcrPull"
-  principal_id         = azurerm_user_assigned_identity.container_app.principal_id
-}
-
-# ------------------------------------------------------------------ #
 # Container App                                                       #
 # ------------------------------------------------------------------ #
 
@@ -80,6 +70,8 @@ resource "azurerm_container_app" "this" {
   container_app_environment_id = azurerm_container_app_environment.this.id
   resource_group_name          = azurerm_resource_group.this.name
   revision_mode                = "Single"
+
+  depends_on = [azurerm_role_assignment.acr_pull]
 
   identity {
     type         = "UserAssigned"
